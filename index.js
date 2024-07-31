@@ -97,8 +97,66 @@ function viewRoles() {
         .then(() => employeeApp())
 };
 // function to add employees
+function addEmployee() {
+    prompt([
+        {
+            name: 'Employee_First_Name',
+            message: 'Enter first name'
+        },
+        {
+            name: 'Employee_Last_Name',
+            message: 'Enter last name'
+        },
+        {
+            name: 'Salary',
+            message: 'Enter Salary'
+        },
+        {
+            name: 'Role',
+            message: 'Enter Role'
+        },
+        {
+            name: 'Manager',
+            message: 'Enter designated Manager'
+        },
+    ])
+}
 // function to add roles
+function addRole() {
+    prompt([
+        {
+            name: 'Role',
+            message: 'Enter New Role'
+        },
+        {
+            name: 'Role_Salary',
+            message: 'Enter New Role Salary'
+        },
+        {
+            name: 'Department',
+            message: 'Which department does this role belong to?'
+        },
+    ]).then((res) => {
+        let name = res;
+        db.addRole(name)
+            .then(() => console.log('Added New Role'))
+            .then(() => employeeApp())
+    })
+}
 // function to add departments
+function addDepartment() {
+    prompt([
+        {
+            name: 'Department',
+            message: 'Enter New Department',
+        },
+    ]).then((res) => {
+        let name = res;
+        db.addDepartment(name)
+            .then(() => console.log('Added New Department!'))
+            .then(() => employeeApp())
+    })
+}
 // function to update employee
 // function to update employee role
 // function to remove employee
