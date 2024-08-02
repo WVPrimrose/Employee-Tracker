@@ -2,12 +2,13 @@
 // need a db folder
 
 const inquirer = require('inquirer')
-const db = require('./db');
+const connections = require('./connections/index')
+// const db = require('./db')
 const { log, table } = require('console');
 
 // shows all the following choices: viewing employees, roles and departments, creating, updating, and removing employees, and creating departments
 function employeeApp() {
-    prompt([
+    inquirer.prompt([
         {
             type: 'list',
             name: 'firstQuestion',
@@ -38,10 +39,6 @@ function employeeApp() {
                     value: 'Create_New_Department',
                 },
                 {
-                    name: 'Update Employee',
-                    value: 'Update_Employee',
-                },
-                {
                     name: 'Update Employee Role',
                     value: 'Update_Employee_Role',
                 },
@@ -57,21 +54,22 @@ function employeeApp() {
         },
         // Switch case if user choices for the following functions   
     ]).then((res) => {
-        let choice = res.choice;
-        switch (key) {
-            case value:
-
+        console.log(res)
+        let choice = res.firstQuestion;
+        switch (choice) {
+            case 'View_Departments':
+            viewDepartments()
                 break;
 
             default:
-                break;
+            quit();
         }
     });
 }
 
 // function to view all departments
 function viewDepartments() {
-    db.viewDepartments()
+    connections.findDepartments()
         .then(({ rows }) => {
             let deparments = rows
             console.table(deparment)
@@ -108,21 +106,42 @@ function addEmployee() {
             message: 'Enter last name'
         },
         {
-            name: 'Salary',
-            message: 'Enter Salary'
-        },
-        {
+            type: list,
             name: 'Role',
-            message: 'Enter Role'
+            message: 'Enter Role',
+            choices: roleChoices
         },
         {
             name: 'Manager',
             message: 'Enter designated Manager'
         },
-    ])
+    ]).then((res) => {
+        let firstName = res.first_name;
+        let lastName = res.last_name;
+    })
+    db.viewRoles().then(({ rows }) => {
+        let roles = rows;
+        const roleChoices = roles.map(({ id, title }) => ({
+            name: title,
+            value: id,
+        }));
+    })
+    db.viewEmployees().then(({ rows }) => {
+        let employees = rows;
+        const managerChoices = employees.map(
+            ({ id, first_name, })
+        )
+    })
 }
 // function to add roles
 function addRole() {
+    db.viewDepartments().then(({ rows }) => {
+        let departments = rows;
+        const departmentAreas = departments.map(({ id, name }) => ({
+            name: name,
+            value: id,
+        }))
+    })
     prompt([
         {
             name: 'Role',
@@ -134,7 +153,9 @@ function addRole() {
         },
         {
             name: 'Department',
-            message: 'Which department does this role belong to?'
+            type: 'list',
+            message: 'Which department does this role belong to?',
+            choice: departmentAreas
         },
     ]).then((res) => {
         let name = res;
@@ -157,11 +178,20 @@ function addDepartment() {
             .then(() => employeeApp())
     })
 }
-// function to update employee
 // function to update employee role
+function updateEmployeeRole() {
+    prompt([
+        {
+            name: 'Employee_Role_Update',
+            message: 'Who`s role do you want to update?'
+        }
+    ])
+}
 // function to remove employee
 // function to quit application
 function quit() {
     console.log('Thank you for your time!  Come back next time!');
     process.exit();
 }
+
+employeeApp()
