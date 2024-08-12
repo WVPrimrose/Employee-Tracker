@@ -3,18 +3,17 @@ const pool = require('./connections');
 // function to view all employees: first name, last name, roles, departments, salaries, managers
 
 // function to view all departments
-function findDepartments(){
+async function findDepartments(){
     const sql = `SELECT id, name AS title FROM department`;
-    pool.query(sql, (err, { rows }) => {
+    const departments = await pool.query(sql, (err, { rows }) => {
         if (err) {
-            res.status(500).json({ error: err.message });
-            return;
+            return err;
         }
-        res.json({
-            message: 'Viewing Departments',
-            data: rows
-        });
-    });
+        console.table(rows)
+        return rows
+    }) 
+    console.log(departments)
+    return departments
 }
 // function to view all roles with join by department
 

@@ -68,11 +68,12 @@ function employeeApp() {
 }
 
 // function to view all departments
-function viewDepartments() {
-    connections.findDepartments()
-        .then(({ rows }) => {
+async function viewDepartments() {
+   
+    const find = await connections.findDepartments()
+        .then(( rows ) => {
             let deparments = rows
-            console.table(deparment)
+
         })
         .then(() => employeeApp())
 }
