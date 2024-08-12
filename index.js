@@ -64,6 +64,9 @@ function employeeApp() {
             case 'View_Roles':
                 viewRoles()
                 break;
+            case 'View_Employees':
+                viewEmployees()
+                break;
             default:
                 quit();
         }
@@ -100,7 +103,7 @@ async function viewRoles() {
 };
 // function to view all employees
 async function viewEmployees() {
-    const sql = `SELECT id, first_name, last_name, role_id, manager_id`
+    const sql = `SELECT id, first_name, last_name, role_id, manager_id AS title FROM employee`;
     const employee = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
