@@ -21,3 +21,11 @@ VALUES
 INSERT INTO employee
 (first_name, last_name, role_id, manager_id)
 VALUES
+('Belle', 'Tinkerhead', 1, 2)
+('Gaston', 'Beast', 2, NULL)
+('Simon', 'Oliver', 3, 4)
+('Simone', 'Toliver', 4, NULL)
+('Jackson', 'Dodger', 5, 6)
+('Jack', 'Dawkins', 6, NULL)
+('Nancy', 'Stikes', 7, 8)
+('Beth', 'March', 8, NULL)
