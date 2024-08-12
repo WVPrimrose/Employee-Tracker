@@ -3,8 +3,9 @@
 
 const inquirer = require('inquirer')
 const connections = require('./connections/index')
-// const db = require('./db')
+const pool = require('./connections/connections')
 const { log, table } = require('console');
+const db = pool.connect()
 
 // shows all the following choices: viewing employees, roles and departments, creating, updating, and removing employees, and creating departments
 function employeeApp() {
@@ -58,42 +59,58 @@ function employeeApp() {
         let choice = res.firstQuestion;
         switch (choice) {
             case 'View_Departments':
-            viewDepartments()
+                viewDepartments()
                 break;
-
+            case 'View_Roles':
+                viewRoles()
+                break;
             default:
-            quit();
+                quit();
         }
     });
 }
 
 // function to view all departments
 async function viewDepartments() {
-   
-    const find = await connections.findDepartments()
-        .then(( rows ) => {
-            let deparments = rows
-
-        })
-        .then(() => employeeApp())
+    const sql = `SELECT id, name AS title FROM department`;
+    const departments = await pool.query(sql, (err, { rows }) => {
+        if (err) {
+            console.error(err)
+            return err;
+        }
+        console.log('\n')
+        console.table(rows)
+        console.log('\n')
+    })
+    employeeApp()
 }
-// function to view all employees
-function viewEmployees() {
-    db.viewEmployees()
-        .then(({ rows }) => {
-            let employees = rows;
-            console.table(employee)
-        })
-        .then(() => employeeApp())
-};
 // function to view all roles
-function viewRoles() {
-    db.viewRoles()
-        .then(({ rows }) => {
-            let roles = rows;
-            console.table(role)
-        })
-        .then(() => employeeApp())
+async function viewRoles() {
+    const sql = `SELECT id, title, salary, department_id AS title FROM role`;
+    const roles = await pool.query(sql, (err, { rows }) => {
+        if (err) {
+            console.error(err)
+            return err;
+        }
+        console.log('\n');
+        console.table(rows)
+        console.log('\n')
+    })
+    employeeApp()
+};
+// function to view all employees
+async function viewEmployees() {
+    const sql = `SELECT id, first_name, last_name, role_id, manager_id`
+    const employee = await pool.query(sql, (err, { rows }) => {
+        if (err) {
+            console.error(err)
+            return err;
+        }
+        console.log('\n')
+        console.table(rows)
+        console.log('\n')
+    })
+    employeeApp()
 };
 // function to add employees
 function addEmployee() {
