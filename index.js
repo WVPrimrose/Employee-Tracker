@@ -67,6 +67,9 @@ function employeeApp() {
             case 'View_Employees':
                 viewEmployees()
                 break;
+            case 'Create_New_Department':
+                addDepartment()
+                break;
             default:
                 quit();
         }
@@ -76,7 +79,7 @@ function employeeApp() {
 // function to view all departments
 async function viewDepartments() {
     const sql = `SELECT id, name AS title FROM department`;
-    const departments = await pool.query(sql, (err, { rows }) => {
+    const viewDepartments = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
             return err;
@@ -90,7 +93,7 @@ async function viewDepartments() {
 // function to view all roles
 async function viewRoles() {
     const sql = `SELECT id, title, salary, department_id AS title FROM role`;
-    const roles = await pool.query(sql, (err, { rows }) => {
+    const viewRoles = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
             return err;
@@ -104,7 +107,7 @@ async function viewRoles() {
 // function to view all employees
 async function viewEmployees() {
     const sql = `SELECT id, first_name, last_name, role_id, manager_id AS title FROM employee`;
-    const employee = await pool.query(sql, (err, { rows }) => {
+    const viewEmployees = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
             return err;
@@ -115,6 +118,42 @@ async function viewEmployees() {
     })
     employeeApp()
 };
+// function to add departments
+async function addDepartment() {
+    // want to ask the name of new department
+    const enterDepartment = await inquirer.prompt([
+        {
+            name: 'name',
+            message: 'Enter new department',
+            type: 'input'
+        },
+    ])
+    // have a command to insert new data
+    const sql = `INSERT INTO department (name) VALUES ($1)`;
+    const addDepartment = await pool.query(sql, (err, {
+        rows, enterDepartment}) => {
+        if (err) {
+            // have a function to catch the error message
+            console.error(err)
+            return err;
+        }
+        console.log('\n')
+        console.table(rows)
+        console.log('\n')
+    })
+    employeeApp()
+    // prompt([
+    //     {
+    //         name: 'Department',
+    //         message: 'Enter New Department',
+    //     },
+    // ]).then((res) => {
+    //     let name = res;
+    //     db.addDepartment(name)
+    //         .then(() => console.log('Added New Department!'))
+    //         .then(() => employeeApp())
+    // })
+}
 // function to add employees
 function addEmployee() {
     prompt([
@@ -182,20 +221,6 @@ function addRole() {
         let name = res;
         db.addRole(name)
             .then(() => console.log('Added New Role'))
-            .then(() => employeeApp())
-    })
-}
-// function to add departments
-function addDepartment() {
-    prompt([
-        {
-            name: 'Department',
-            message: 'Enter New Department',
-        },
-    ]).then((res) => {
-        let name = res;
-        db.addDepartment(name)
-            .then(() => console.log('Added New Department!'))
             .then(() => employeeApp())
     })
 }
