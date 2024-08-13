@@ -129,8 +129,8 @@ async function addDepartment() {
         },
     ])
     // have a command to insert new data
-    const sql = `INSERT INTO department (name) VALUES ($1)`;
-    const addDepartment = await pool.query(sql, (err) => {
+    const sql = `INSERT INTO department (name) VALUES (${enterDepartment})`;
+    const addDepartment = pool.query(sql, (err) => {
         if (err) {
             // have a function to catch the error message
             console.error(err)
