@@ -87,8 +87,8 @@ async function viewDepartments() {
         console.log('\n')
         console.table(rows)
         console.log('\n')
+        employeeApp()
     })
-    employeeApp()
 }
 // function to view all roles
 async function viewRoles() {
@@ -101,8 +101,8 @@ async function viewRoles() {
         console.log('\n');
         console.table(rows)
         console.log('\n')
+        employeeApp()
     })
-    employeeApp()
 };
 // function to view all employees
 async function viewEmployees() {
@@ -115,8 +115,8 @@ async function viewEmployees() {
         console.log('\n')
         console.table(rows)
         console.log('\n')
+        employeeApp()
     })
-    employeeApp()
 };
 // function to add departments
 async function addDepartment() {
@@ -130,18 +130,17 @@ async function addDepartment() {
     ])
     // have a command to insert new data
     const sql = `INSERT INTO department (name) VALUES ($1)`;
-    const addDepartment = await pool.query(sql, (err, {
-        rows, enterDepartment}) => {
+    const addDepartment = await pool.query(sql, (err) => {
         if (err) {
             // have a function to catch the error message
             console.error(err)
             return err;
         }
         console.log('\n')
-        console.table(rows)
+        console.table()
         console.log('\n')
+        employeeApp()
     })
-    employeeApp()
     // prompt([
     //     {
     //         name: 'Department',
