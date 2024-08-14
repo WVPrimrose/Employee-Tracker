@@ -128,30 +128,17 @@ async function addDepartment() {
             type: 'input'
         },
     ])
+    console.log(enterDepartment.name)
     // have a command to insert new data
-    const sql = `INSERT INTO department (name) VALUES (${enterDepartment})`;
-    const addDepartment = pool.query(sql, (err) => {
+    const sql = `INSERT INTO department (name) VALUES ($1)`;
+    const addDepartment = pool.query(sql, [enterDepartment.name], (err) => {
         if (err) {
             // have a function to catch the error message
             console.error(err)
             return err;
         }
-        console.log('\n')
-        console.table()
-        console.log('\n')
-        employeeApp()
+        viewDepartments()
     })
-    // prompt([
-    //     {
-    //         name: 'Department',
-    //         message: 'Enter New Department',
-    //     },
-    // ]).then((res) => {
-    //     let name = res;
-    //     db.addDepartment(name)
-    //         .then(() => console.log('Added New Department!'))
-    //         .then(() => employeeApp())
-    // })
 }
 // function to add employees
 function addEmployee() {
