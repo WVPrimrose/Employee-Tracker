@@ -70,6 +70,9 @@ function employeeApp() {
             case 'Create_New_Department':
                 addDepartment()
                 break;
+            case 'Create_New_Role':
+                addRole()
+                break;
             default:
                 quit();
         }
@@ -92,7 +95,7 @@ async function viewDepartments() {
 }
 // function to view all roles
 async function viewRoles() {
-    const sql = `SELECT id, title, salary, department_id AS title FROM role`;
+    const sql = `SELECT role.id, role.title, role.salary, department_id AS title FROM role LEFT JOIN department on role.department_id = department.id`;
     const viewRoles = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
@@ -140,16 +143,53 @@ async function addDepartment() {
         viewDepartments()
     })
 }
+// function to add roles
+async function addRole() {
+    const departmentChoices = departments.map(({ id, name}) => ({
+        name: name,
+        id: id
+    }))
+    const enterRole = await inquirer.prompt([
+        {
+            name: 'role',
+            message: 'Enter New Role',
+            type: 'input'
+        },
+        {
+            name: 'salary',
+            message: 'Enter New Role Salary',
+            type: 'input'
+        },
+        {
+            name: 'department',
+            type: 'list',
+            message: 'Which department does this role belong to?',
+            choice: departmentChoices
+        },
+    ])
+    const sql = `INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)`;
+    const addRole = pool.query(sql, [enterRole.role, enterRole.salary, enterRole.department], (err) => {
+        if (err) {
+            // have a function to catch the error message
+            console.error(err)
+            return err;
+        }
+        viewRoles()
+    })
+}
+
 // function to add employees
-function addEmployee() {
-    prompt([
+async function addEmployee() {
+    const enterEmployee= await inquirer.prompt([
         {
             name: 'Employee_First_Name',
-            message: 'Enter first name'
+            message: 'Enter first name',
+            type: 'input'
         },
         {
             name: 'Employee_Last_Name',
-            message: 'Enter last name'
+            message: 'Enter last name',
+            type: 'input'
         },
         {
             type: list,
@@ -177,37 +217,6 @@ function addEmployee() {
         const managerChoices = employees.map(
             ({ id, first_name, })
         )
-    })
-}
-// function to add roles
-function addRole() {
-    db.viewDepartments().then(({ rows }) => {
-        let departments = rows;
-        const departmentAreas = departments.map(({ id, name }) => ({
-            name: name,
-            value: id,
-        }))
-    })
-    prompt([
-        {
-            name: 'Role',
-            message: 'Enter New Role'
-        },
-        {
-            name: 'Role_Salary',
-            message: 'Enter New Role Salary'
-        },
-        {
-            name: 'Department',
-            type: 'list',
-            message: 'Which department does this role belong to?',
-            choice: departmentAreas
-        },
-    ]).then((res) => {
-        let name = res;
-        db.addRole(name)
-            .then(() => console.log('Added New Role'))
-            .then(() => employeeApp())
     })
 }
 // function to update employee role
