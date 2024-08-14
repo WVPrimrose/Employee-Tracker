@@ -145,10 +145,7 @@ async function addDepartment() {
 }
 // function to add roles
 async function addRole() {
-    const departmentChoices = departments.map(({ id, name}) => ({
-        name: name,
-        id: id
-    }))
+    
     const enterRole = await inquirer.prompt([
         {
             name: 'role',
@@ -160,11 +157,21 @@ async function addRole() {
             message: 'Enter New Role Salary',
             type: 'input'
         },
+    ])
+    
+    async function listDepartments() {
+        viewDepartments()
+        const departmentChoices = deparments.map(({ id, name}) => ({
+            name: name,
+            value: id,
+        }));
+    }
+    const belongDepartment = await inquirer.prompt([
         {
             name: 'department',
             type: 'list',
             message: 'Which department does this role belong to?',
-            choice: departmentChoices
+            choice: listDepartments()
         },
     ])
     const sql = `INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)`;
@@ -192,7 +199,7 @@ async function addEmployee() {
             type: 'input'
         },
         {
-            type: list,
+            type: 'list',
             name: 'Role',
             message: 'Enter Role',
             choices: roleChoices
