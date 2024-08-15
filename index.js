@@ -82,7 +82,7 @@ function employeeApp() {
 // function to view all departments
 async function viewDepartments() {
     const sql = `SELECT id, name AS title FROM department`;
-    const viewDepartments = await pool.query(sql, (err, { rows }) => {
+    const getDepartments = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
             return err;
@@ -92,6 +92,9 @@ async function viewDepartments() {
         console.log('\n')
         employeeApp()
     })
+    console.log(getDepartments, 'departments')
+    
+    return getDepartments
 }
 // function to view all roles
 async function viewRoles() {
@@ -160,7 +163,8 @@ async function addRole() {
     ])
     
     async function listDepartments() {
-        viewDepartments()
+        let departments =  await viewDepartments()
+        console.log(departments)
         const departmentChoices = deparments.map(({ id, name}) => ({
             name: name,
             value: id,
