@@ -1,8 +1,6 @@
-// need inquirer as main application runner
-// need a db folder
+// required packages and files to run application
 
 const inquirer = require('inquirer')
-const connections = require('./connections/index')
 const pool = require('./connections/connections')
 const { log, table } = require('console');
 const db = pool.connect()
