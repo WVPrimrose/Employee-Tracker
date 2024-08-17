@@ -238,8 +238,9 @@ async function addEmployee() {
     async function listManagers() {
         let managers = await viewEmployees()
         console.log(managers)
-        return managers.map(({ title, id }) => ({
-            name: title,
+        return managers.map(({ first_name, last_name, id }) => ({
+            name: first_name,
+            name2: last_name,
             value: id,
         }));
     }
