@@ -214,8 +214,8 @@ async function addEmployee() {
     async function listRoles() {
         let roles = await viewRoles()
         console.log(roles)
-        return roles.map(({ id, name }) => ({
-            name: name,
+        return roles.map(({ title, id }) => ({
+            name: title,
             value: id,
         }));
     }
@@ -231,7 +231,8 @@ async function addEmployee() {
         },
         {
             name: 'Manager',
-            message: 'Enter designated Manager'
+            message: 'Enter designated Manager',
+            type: 'input'
         },
     ])
 
