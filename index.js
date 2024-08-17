@@ -118,15 +118,19 @@ async function viewRoles() {
 async function viewEmployees() {
     const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`
 
-    const viewEmployees = await pool.query(sql, (err, { rows }) => {
-        if (err) {
-            console.error(err)
-            return err;
-        }
-        console.log('\n')
-        console.table(rows)
-        console.log('\n')
-        employeeApp()
+    return new Promise((resolve, reject) => {
+
+        pool.query(sql, (err, result) => {
+            if (err) {
+                console.error(err)
+                reject(err);
+            } else {
+                console.log('\n')
+                console.table(result.rows)
+                console.log('\n')
+                resolve(result.rows)
+            }
+        })
     })
 };
 // function to add departments
