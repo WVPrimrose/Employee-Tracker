@@ -16,28 +16,28 @@ function employeeApp() {
             message: 'Welcome to the Employee Tracker.  What would you like to do?',
             choices: [
                 {
-                    name: 'View All Employees',
-                    value: 'View_Employees',
+                    name: 'View All Departments',
+                    value: 'View_Departments',
                 },
                 {
                     name: 'View All Roles',
                     value: 'View_Roles',
                 },
                 {
-                    name: 'View All Departments',
-                    value: 'View_Departments',
+                    name: 'View All Employees',
+                    value: 'View_Employees',
                 },
                 {
-                    name: 'Create New Employee',
-                    value: 'Create_New_Employee',
+                    name: 'Create New Department',
+                    value: 'Create_New_Department',
                 },
                 {
                     name: 'Create New Role',
                     value: 'Create_New_Role',
                 },
                 {
-                    name: 'Create New Department',
-                    value: 'Create_New_Department',
+                    name: 'Create New Employee',
+                    value: 'Create_New_Employee',
                 },
                 {
                     name: 'Update Employee Role',
@@ -73,6 +73,9 @@ function employeeApp() {
             case 'Create_New_Role':
                 addRole()
                 break;
+            case 'Create_New_Employee':
+                addEmployee()
+                break;
             default:
                 quit();
         }
@@ -82,32 +85,35 @@ function employeeApp() {
 // function to view all departments
 async function viewDepartments() {
     const sql = `SELECT id, name AS title FROM department`;
-    const getDepartments = await pool.query(sql, (err, { rows }) => {
-        if (err) {
-            console.error(err)
-            return err;
-        }
-        console.log('\n')
-        console.table(rows)
-        console.log('\n')
-        employeeApp()
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err, result) => {
+            if (err) {
+                console.error(err)
+                reject(err);
+            } else {
+                console.log('\n');
+                console.table(result.rows);
+                console.log('\n');
+                resolve(result.rows)
+            }
+        })
     })
-    console.log(getDepartments, 'departments')
-
-    return getDepartments
 }
 // function to view all roles
 async function viewRoles() {
-    const sql = `SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department on role.department_id = department.id`;;
-    const viewRoles = await pool.query(sql, (err, { rows }) => {
-        if (err) {
-            console.error(err)
-            return err;
-        }
-        console.log('\n');
-        console.table(rows)
-        console.log('\n')
-        employeeApp()
+    const sql = `SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department on role.department_id = department.id`;
+    return new Promise((resolve, reject) => {
+        pool.query(sql, (err, result) => {
+            if (err) {
+                console.error(err)
+                reject(err);
+            } else {
+                console.log('\n');
+                console.table(result.rows)
+                console.log('\n')
+                resolve(result.rows)
+            }
+        })
     })
 };
 // function to view all employees
@@ -166,8 +172,8 @@ async function addRole() {
     async function listDepartments() {
         let departments = await viewDepartments()
         console.log(departments)
-        return departments.map(({ id, name }) => ({
-            name: name,
+        return departments.map(({ id, title }) => ({
+            name: title,
             value: id,
         }));
     }
@@ -188,8 +194,8 @@ async function addRole() {
             console.error(err)
             return err;
         }
-        viewRoles()
     })
+    viewRoles()
 }
 
 // function to add employees
