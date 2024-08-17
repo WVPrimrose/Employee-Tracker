@@ -93,7 +93,7 @@ async function viewDepartments() {
         employeeApp()
     })
     console.log(getDepartments, 'departments')
-    
+
     return getDepartments
 }
 // function to view all roles
@@ -113,7 +113,7 @@ async function viewRoles() {
 // function to view all employees
 async function viewEmployees() {
     const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`
-    
+
     const viewEmployees = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
@@ -149,7 +149,7 @@ async function addDepartment() {
 }
 // function to add roles
 async function addRole() {
-    
+
     const enterRole = await inquirer.prompt([
         {
             name: 'role',
@@ -162,11 +162,11 @@ async function addRole() {
             type: 'input'
         },
     ])
-    
+
     async function listDepartments() {
-        let departments =  await viewDepartments()
+        let departments = await viewDepartments()
         console.log(departments)
-        return departments.map(({ id, name}) => ({
+        return departments.map(({ id, name }) => ({
             name: name,
             value: id,
         }));
@@ -178,11 +178,11 @@ async function addRole() {
             name: 'department',
             type: 'list',
             message: 'Which department does this role belong to?',
-            choices: listDepartments()
+            choices: departmentChoices
         },
     ])
     const sql = `INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)`;
-    const addRole = pool.query(sql, [enterRole.role, enterRole.salary, enterRole.department], (err) => {
+    const addRole = pool.query(sql, [enterRole.role, enterRole.salary, belongDepartment.department], (err) => {
         if (err) {
             // have a function to catch the error message
             console.error(err)
@@ -194,7 +194,7 @@ async function addRole() {
 
 // function to add employees
 async function addEmployee() {
-    const enterEmployee= await inquirer.prompt([
+    const enterEmployee = await inquirer.prompt([
         {
             name: 'Employee_First_Name',
             message: 'Enter first name',
@@ -205,34 +205,45 @@ async function addEmployee() {
             message: 'Enter last name',
             type: 'input'
         },
-        {
-            type: 'list',
-            name: 'Role',
-            message: 'Enter Role',
-            choices: roleChoices
-        },
-        {
-            name: 'Manager',
-            message: 'Enter designated Manager'
-        },
-    ]).then((res) => {
-        let firstName = res.first_name;
-        let lastName = res.last_name;
-    })
-    db.viewRoles().then(({ rows }) => {
-        let roles = rows;
-        const roleChoices = roles.map(({ id, title }) => ({
-            name: title,
+    ])
+
+    async function listRoles() {
+        let roles = await viewRoles()
+        console.log(roles)
+        return roles.map(({ id, name }) => ({
+            name: name,
             value: id,
         }));
-    })
-    db.viewEmployees().then(({ rows }) => {
-        let employees = rows;
-        const managerChoices = employees.map(
-            ({ id, first_name, })
-        )
+        const roleChoices = await listRoles()
+
+        const whichRole = await inquirer.prompt([
+
+            {
+                type: 'list',
+                name: 'Role',
+                message: 'Enter Role',
+                choices: roleChoices
+            },
+            {
+                name: 'Manager',
+                message: 'Enter designated Manager'
+            },
+        ])
+    }
+
+    const sql = `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES($1, $2, $3, $4)`
+
+    const addEmployee = pool.query(sql, [enterEmployee.first_name, enterEmployee.last_name, enterRole.department], (err) => {
+        if (err) {
+            // have a function to catch the error message
+            console.error(err)
+            return err;
+        }
+        viewEmployees()
     })
 }
+
+
 // function to update employee role
 function updateEmployeeRole() {
     prompt([
