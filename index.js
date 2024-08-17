@@ -214,26 +214,26 @@ async function addEmployee() {
             name: name,
             value: id,
         }));
-        const roleChoices = await listRoles()
-
-        const whichRole = await inquirer.prompt([
-
-            {
-                type: 'list',
-                name: 'Role',
-                message: 'Enter Role',
-                choices: roleChoices
-            },
-            {
-                name: 'Manager',
-                message: 'Enter designated Manager'
-            },
-        ])
     }
+    const roleChoices = await listRoles()
+
+    const whichRole = await inquirer.prompt([
+
+        {
+            type: 'list',
+            name: 'role',
+            message: 'Enter Role',
+            choices: roleChoices
+        },
+        {
+            name: 'Manager',
+            message: 'Enter designated Manager'
+        },
+    ])
 
     const sql = `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES($1, $2, $3, $4)`
 
-    const addEmployee = pool.query(sql, [enterEmployee.first_name, enterEmployee.last_name, enterRole.department], (err) => {
+    const addEmployee = pool.query(sql, [enterEmployee.first_name, enterEmployee.last_name, whichRole.role], (err) => {
         if (err) {
             // have a function to catch the error message
             console.error(err)
