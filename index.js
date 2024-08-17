@@ -204,12 +204,12 @@ async function addRole() {
 async function addEmployee() {
     const enterEmployee = await inquirer.prompt([
         {
-            name: 'Employee_First_Name',
+            name: 'first_name',
             message: 'Enter first name',
             type: 'input'
         },
         {
-            name: 'Employee_Last_Name',
+            name: 'last_name',
             message: 'Enter last name',
             type: 'input'
         },
