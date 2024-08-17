@@ -98,7 +98,7 @@ async function viewDepartments() {
 }
 // function to view all roles
 async function viewRoles() {
-    const sql = `SELECT role.id, role.title, role.salary, department_id AS title FROM role LEFT JOIN department on role.department_id = department.id`;
+    const sql = `SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department on role.department_id = department.id`;;
     const viewRoles = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
@@ -112,7 +112,8 @@ async function viewRoles() {
 };
 // function to view all employees
 async function viewEmployees() {
-    const sql = `SELECT id, first_name, last_name, role_id, manager_id AS title FROM employee`;
+    const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`
+    
     const viewEmployees = await pool.query(sql, (err, { rows }) => {
         if (err) {
             console.error(err)
@@ -165,17 +166,19 @@ async function addRole() {
     async function listDepartments() {
         let departments =  await viewDepartments()
         console.log(departments)
-        const departmentChoices = deparments.map(({ id, name}) => ({
+        return departments.map(({ id, name}) => ({
             name: name,
             value: id,
         }));
     }
+    const departmentChoices = await listDepartments()
+
     const belongDepartment = await inquirer.prompt([
         {
             name: 'department',
             type: 'list',
             message: 'Which department does this role belong to?',
-            choice: listDepartments()
+            choices: listDepartments()
         },
     ])
     const sql = `INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)`;
