@@ -269,7 +269,9 @@ async function addEmployee() {
 
 
 // function to update employee role
-function updateEmployeeRole() {
+async function updateEmployeeRole() {
+    // want to select an employee from the following choices
+    // want to select a role which to update
     prompt([
         {
             name: 'Employee_Role_Update',
