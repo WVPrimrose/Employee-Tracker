@@ -11,3 +11,7 @@ We use inquirer to view, add, and update the following data:
 * update employee role
 
 The following walkthrough video demonstrates the functionality described from above.
+
+Note: due to time constraints, update employee role is not available.
+
+()[https://drive.google.com/file/d/1EL6EReQdNCo732dhx_OEt0Dg8uzDXLY5/view?usp=sharing]
